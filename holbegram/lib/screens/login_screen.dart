@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
               "Holbegram",
               style: TextStyle(fontFamily: 'Billabong', fontSize: 50),
             ),
-            Image.asset("assets/images/logo.png", width: 80, height: 60),
+            Image.asset("assets/images/logo.webp", width: 80, height: 60),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(

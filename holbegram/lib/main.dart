@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:holbegram/screens/login_screen.dart'; // Importe ton écran de login
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -15,10 +16,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(child: Text('Holbegram ready')),
+      title: 'Holbegram',
+      // On définit l'écran de démarrage ici
+      home: LoginScreen(
+        emailController: TextEditingController(),
+        passwordController: TextEditingController(),
       ),
     );
   }
