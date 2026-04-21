@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:holbegram/widgets/text_field.dart';
-import 'package:holbegram/screens/login_screen.dart'; // Import your login screen here
+import 'package:holbegram/screens/login_screen.dart';
 
 class SignUp extends StatefulWidget {
   final TextEditingController emailController;
@@ -49,18 +49,12 @@ class _SignUpState extends State<SignUp> {
             const SizedBox(height: 28),
             const Text(
               "Holbegram",
-              style: TextStyle(
-                fontFamily: 'Billabong',
-                fontSize: 50,
-              ),
+              style: TextStyle(fontFamily: 'Billabong', fontSize: 50),
             ),
             const Text(
               "Sign up to see photos and videos from your friends.",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -87,14 +81,8 @@ class _SignUpState extends State<SignUp> {
                     hintText: "Password",
                     keyboardType: TextInputType.visiblePassword,
                     suffixIcon: IconButton(
-                      icon: Icon(
-                        _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _passwordVisible = !_passwordVisible;
-                        });
-                      },
+                      icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -110,15 +98,10 @@ class _SignUpState extends State<SignUp> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(
-                          const Color.fromARGB(218, 226, 37, 24),
-                        ),
+                        backgroundColor: WidgetStateProperty.all(const Color.fromARGB(218, 226, 37, 24)),
                       ),
                       onPressed: () {},
-                      child: const Text(
-                        "Sign up",
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: const Text("Sign up", style: TextStyle(color: Colors.white)),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -131,7 +114,15 @@ class _SignUpState extends State<SignUp> {
                         const Text("Have an account? "),
                         TextButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(
+                                  emailController: TextEditingController(),
+                                  passwordController: TextEditingController(),
+                                ),
+                              ),
+                            );
                           },
                           child: const Text(
                             "Log in",
