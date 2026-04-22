@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:holbegram/methods/auth_methods.dart';
-import 'package:holbegram/screens/home_screen.dart'; // Assure-toi que ce fichier existe
+import 'package:holbegram/screens/home_screen.dart';
 
 class AddPicture extends StatefulWidget {
   final String email;
@@ -22,29 +22,23 @@ class AddPicture extends StatefulWidget {
 
 class _AddPictureState extends State<AddPicture> {
   Uint8List? _image;
-  bool _isLoading = false; // Pour afficher un indicateur de chargement
+  bool _isLoading = false;
 
-  // Méthode pour choisir depuis la galerie
   void selectImageFromGallery() async {
     final ImagePicker picker = ImagePicker();
     XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       Uint8List img = await image.readAsBytes();
-      setState(() {
-        _image = img;
-      });
+      setState(() => _image = img);
     }
   }
 
-  // Méthode pour prendre une photo avec la caméra
   void selectImageFromCamera() async {
     final ImagePicker picker = ImagePicker();
     XFile? image = await picker.pickImage(source: ImageSource.camera);
     if (image != null) {
       Uint8List img = await image.readAsBytes();
-      setState(() {
-        _image = img;
-      });
+      setState(() => _image = img);
     }
   }
 
@@ -60,14 +54,16 @@ class _AddPictureState extends State<AddPicture> {
               style: TextStyle(fontFamily: 'Billabong', fontSize: 50),
             ),
             const SizedBox(height: 20),
-            const Text(
-              "Hello, sign up to see photos and videos from your friends.",
+            
+            // AFFICHAGE : Utilisation de widget.username (Remplace John Doe)
+            Text(
+              "Hello ${widget.username}, sign up to see photos and videos from your friends.",
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
+            
             const SizedBox(height: 20),
             
-            // Affichage de l'image sélectionnée ou de l'icône par défaut
             _image != null
                 ? CircleAvatar(
                     radius: 70,
@@ -77,11 +73,12 @@ class _AddPictureState extends State<AddPicture> {
                     "assets/images/inst_logo.png",
                     width: 140,
                     height: 140,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.account_circle, size: 140, color: Colors.grey),
                   ),
             
             const SizedBox(height: 30),
             
-            // Icônes Caméra et Galerie
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -98,7 +95,6 @@ class _AddPictureState extends State<AddPicture> {
             
             const SizedBox(height: 40),
             
-            // Bouton final d'inscription
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SizedBox(
@@ -108,46 +104,43 @@ class _AddPictureState extends State<AddPicture> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(218, 226, 37, 24),
                   ),
-                  onPressed: _isLoading 
-                    ? null // Désactive le bouton pendant le chargement
-                    : () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
+                  onPressed: _isLoading ? null : () async {
+                    setState(() => _isLoading = true);
 
-                        String res = await AuthMethode().signUpUser(
-                          email: widget.email,
-                          password: widget.password,
-                          username: widget.username,
-                          file: _image,
-                        );
+                    // APPEL : signUpUser avec les données passées via widget
+                    String res = await AuthMethode().signUpUser(
+                      email: widget.email,
+                      username: widget.username,
+                      password: widget.password,
+                      file: _image,
+                    );
 
-                        setState(() {
-                          _isLoading = false;
-                        });
+                    if (!mounted) return;
+                    setState(() => _isLoading = false);
 
-                        if (res == "success") {
-                          if (!mounted) return;
-                          
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Account Created!")),
-                          );
+                    if (res == "success") {
+                      // SNACKBAR : Affiche "success" selon la consigne
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("success")),
+                      );
 
-                          // Navigation vers le Home et suppression de la pile d'écrans
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (context) => const HomeScreen()),
-                            (route) => false,
-                          );
-                        } else {
-                          if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(res)),
-                          );
-                        }
-                      },
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const HomeScreen()),
+                        (route) => false,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(res)),
+                      );
+                    }
+                  },
                   child: _isLoading 
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? const SizedBox(
+                        height: 20, 
+                        width: 20, 
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                      )
                     : const Text("Next", style: TextStyle(color: Colors.white)),
                 ),
               ),

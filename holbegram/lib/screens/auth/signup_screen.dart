@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:holbegram/widgets/text_field.dart';
-import 'package:holbegram/screens/upload_image_screen.dart'; // Import de ton nouvel écran
+import 'package:holbegram/screens/upload_image_screen.dart';
 
 class SignUp extends StatefulWidget {
   final TextEditingController emailController;
@@ -59,11 +59,8 @@ class _SignUpState extends State<SignUp> {
                     hintText: "Password",
                     keyboardType: TextInputType.visiblePassword,
                     suffixIcon: IconButton(
-                      icon: Icon(_passwordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off),
-                      onPressed: () =>
-                          setState(() => _passwordVisible = !_passwordVisible),
+                      icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -82,28 +79,24 @@ class _SignUpState extends State<SignUp> {
                         backgroundColor: const Color.fromARGB(218, 226, 37, 24),
                       ),
                       onPressed: () {
-                        // 1. Vérification des champs vides
+                        // Validation de base
                         if (widget.emailController.text.isEmpty ||
                             widget.usernameController.text.isEmpty ||
                             widget.passwordController.text.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("Please fill all the fields")),
+                            const SnackBar(content: Text("Please fill all fields")),
                           );
                           return;
                         }
 
-                        // 2. Vérification de la correspondance des mots de passe
-                        if (widget.passwordController.text !=
-                            widget.passwordConfirmController.text) {
+                        if (widget.passwordController.text != widget.passwordConfirmController.text) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("Passwords do not match")),
+                            const SnackBar(content: Text("Passwords do not match")),
                           );
                           return;
                         }
 
-                        // 3. Navigation vers l'écran suivant (AddPicture)
+                        // NAVIGATION : On passe les données à AddPicture
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -115,8 +108,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         );
                       },
-                      child: const Text("Sign up",
-                          style: TextStyle(color: Colors.white)),
+                      child: const Text("Sign up", style: TextStyle(color: Colors.white)),
                     ),
                   ),
                 ],
