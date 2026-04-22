@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:holbegram/methods/auth_methods.dart';
 import 'package:holbegram/widgets/text_field.dart';
 import 'package:holbegram/screens/signup_screen.dart';
+import 'package:holbegram/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final TextEditingController emailController;
@@ -26,25 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  void dispose() {
-    widget.emailController.dispose();
-    widget.passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 28),
-            const Text(
-              "Holbegram",
-              style: TextStyle(fontFamily: 'Billabong', fontSize: 50),
-            ),
+            const Text("Holbegram", style: TextStyle(fontFamily: 'Billabong', fontSize: 50)),
             Image.asset("assets/images/logo.webp", width: 80, height: 60),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -64,7 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: "Password",
                     keyboardType: TextInputType.visiblePassword,
                     suffixIcon: IconButton(
-                      alignment: Alignment.bottomLeft,
                       icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
                       onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
                     ),
@@ -74,53 +63,54 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 48,
                     width: double.infinity,
                     child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(const Color.fromARGB(218, 226, 37, 24)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(218, 226, 37, 24),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        String res = await AuthMethode().login(
+                          email: widget.emailController.text,
+                          password: widget.passwordController.text,
+                        );
+                        if (res == "success") {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HomeScreen()),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(res)),
+                          );
+                        }
+                      },
                       child: const Text("Log in", style: TextStyle(color: Colors.white)),
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Forgot your login details? "),
-                      Text("Get help logging in", style: TextStyle(fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  const Divider(thickness: 2),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Don't have an account "),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SignUp(
-                                  emailController: TextEditingController(),
-                                  usernameController: TextEditingController(),
-                                  passwordController: TextEditingController(),
-                                  passwordConfirmController: TextEditingController(),
-                                ),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            "Sign up",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(218, 226, 37, 24),
+                      const Text("Don't have an account "),
+                      TextButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignUp(
+                              emailController: TextEditingController(),
+                              usernameController: TextEditingController(),
+                              passwordController: TextEditingController(),
+                              passwordConfirmController: TextEditingController(),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                        child: const Text(
+                          "Sign up",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold, 
+                            color: Color.fromARGB(218, 226, 37, 24),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
