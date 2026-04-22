@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:holbegram/methods/auth_methods.dart';
 import 'package:holbegram/widgets/text_field.dart';
+import 'package:holbegram/screens/upload_image_screen.dart'; // Import de ton nouvel écran
 
 class SignUp extends StatefulWidget {
   final TextEditingController emailController;
@@ -59,8 +59,11 @@ class _SignUpState extends State<SignUp> {
                     hintText: "Password",
                     keyboardType: TextInputType.visiblePassword,
                     suffixIcon: IconButton(
-                      icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
+                      icon: Icon(_passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                      onPressed: () =>
+                          setState(() => _passwordVisible = !_passwordVisible),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -78,30 +81,42 @@ class _SignUpState extends State<SignUp> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(218, 226, 37, 24),
                       ),
-                      onPressed: () async {
-                        if (widget.passwordController.text != widget.passwordConfirmController.text) {
+                      onPressed: () {
+                        // 1. Vérification des champs vides
+                        if (widget.emailController.text.isEmpty ||
+                            widget.usernameController.text.isEmpty ||
+                            widget.passwordController.text.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Passwords do not match")),
+                            const SnackBar(
+                                content: Text("Please fill all the fields")),
                           );
                           return;
                         }
-                        String res = await AuthMethode().signUpUser(
-                          email: widget.emailController.text,
-                          password: widget.passwordController.text,
-                          username: widget.usernameController.text,
-                        );
-                        if (res == "success") {
+
+                        // 2. Vérification de la correspondance des mots de passe
+                        if (widget.passwordController.text !=
+                            widget.passwordConfirmController.text) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Account created! Logging in...")),
+                            const SnackBar(
+                                content: Text("Passwords do not match")),
                           );
-                          Navigator.pop(context);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(res)),
-                          );
+                          return;
                         }
+
+                        // 3. Navigation vers l'écran suivant (AddPicture)
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddPicture(
+                              email: widget.emailController.text,
+                              username: widget.usernameController.text,
+                              password: widget.passwordController.text,
+                            ),
+                          ),
+                        );
                       },
-                      child: const Text("Sign up", style: TextStyle(color: Colors.white)),
+                      child: const Text("Sign up",
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ),
                 ],
