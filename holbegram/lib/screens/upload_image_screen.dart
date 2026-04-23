@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:holbegram/methods/auth_methods.dart';
-import 'package:holbegram/screens/home_screen.dart';
+import 'package:holbegram/screens/home.dart';
 
 class AddPicture extends StatefulWidget {
   final String email;
@@ -126,7 +126,7 @@ class _AddPictureState extends State<AddPicture> {
 
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => const HomeScreen()),
+                        MaterialPageRoute(builder: (context) => const Home()),
                         (route) => false,
                       );
                     } else {
