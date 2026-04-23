@@ -1,6 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:holbegram/providers/user_provider.dart';
+import 'package:holbegram/models/user.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,45 +12,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String username = "";
-  String photoUrl = "";
-  bool isLoading = true;
-
+  
   @override
   void initState() {
     super.initState();
-    getUserData();
+    // On demande au Provider de charger les données de l'utilisateur dès le début
+    addData();
   }
 
-  // Fonction pour récupérer les données réelles de Firestore
-  void getUserData() async {
-    try {
-      // 1. On récupère l'ID de l'utilisateur actuellement connecté
-      String uid = FirebaseAuth.instance.currentUser!.uid;
-
-      // 2. On va chercher son document dans la collection 'users'
-      var userSnap = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .get();
-
-      if (userSnap.exists) {
-        setState(() {
-          username = userSnap.data()?['username'] ?? "Utilisateur";
-          photoUrl = userSnap.data()?['photoUrl'] ?? "";
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print("Erreur lors de la récupération des données : $e");
-      setState(() {
-        isLoading = false;
-      });
-    }
+  // Fonction pour rafraîchir l'utilisateur via le Provider
+  void addData() async {
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    await userProvider.refreshUser();
   }
 
   @override
   Widget build(BuildContext context) {
+    // On récupère les données de l'utilisateur stockées dans le Provider
+    final Users? user = Provider.of<UserProvider>(context).getUser;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -62,30 +44,31 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
-              // Optionnel : Rediriger vers l'écran de login après déconnexion
+              // Retour au login après déconnexion si nécessaire
             },
             icon: const Icon(Icons.logout),
           ),
         ],
       ),
-      body: isLoading
+      // Si l'utilisateur n'est pas encore chargé, on affiche un loader
+      body: user == null
           ? const Center(child: CircularProgressIndicator(color: Colors.red))
           : Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Affichage de la photo de profil venant de Cloudinary
-                  photoUrl != ""
+                  // Photo de profil dynamique via le Provider
+                  user.photoUrl != ""
                       ? CircleAvatar(
                           radius: 60,
-                          backgroundImage: NetworkImage(photoUrl),
+                          backgroundImage: NetworkImage(user.photoUrl),
                         )
                       : const Icon(Icons.account_circle, size: 120),
                   
                   const SizedBox(height: 20),
                   
                   Text(
-                    "Bienvenue, $username !",
+                    "Bienvenue, ${user.username} !",
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -93,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   
                   const Text(
-                    "Tu es maintenant connecté à ton feed.",
+                    "Tu es maintenant connecté à ton feed via Provider.",
                     style: TextStyle(color: Colors.grey),
                   ),
                 ],

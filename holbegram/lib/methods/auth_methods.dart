@@ -2,11 +2,22 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:holbegram/models/user.dart';
-import 'package:holbegram/screens/auth/methods/user_storage.dart'; // Import pour Cloudinary
+import 'package:holbegram/screens/auth/methods/user_storage.dart';
+import 'dart:convert';
 
 class AuthMethode {
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // AJOUT : Méthode pour obtenir les détails de l'utilisateur actuel
+  Future<Users> getUserDetails() async {
+    firebase_auth.User currentUser = _auth.currentUser!;
+
+    DocumentSnapshot snap =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+
+    return Users.fromSnap(snap);
+  }
 
   // Connexion
   Future<String> login({
@@ -29,7 +40,7 @@ class AuthMethode {
     required String email,
     required String password,
     required String username,
-    Uint8List? file, // L'image reçue de AddPicture
+    Uint8List? file,
   }) async {
     String res = "Some error occurred";
     try {
@@ -43,23 +54,23 @@ class AuthMethode {
         password: password,
       );
 
-      // 2. Upload de l'image sur Cloudinary si elle existe
+      // 2. Upload de l'image sur Cloudinary
       String photoUrl = "";
       if (file != null) {
         photoUrl = await StorageMethods().uploadImageToStorage(
-          false, // Ce n'est pas un post, c'est un profil
-          "profilePics", 
+          false,
+          "profilePics",
           file,
         );
       }
 
-      // 3. Création de l'objet User avec la vraie photoUrl
+      // 3. Création de l'objet User
       Users users = Users(
         uid: userCredential.user!.uid,
         email: email,
         username: username,
         bio: "",
-        photoUrl: photoUrl, // URL Cloudinary !
+        photoUrl: photoUrl,
         followers: [],
         following: [],
         posts: [],
