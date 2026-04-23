@@ -34,12 +34,13 @@ class _BottomNavState extends State<BottomNav> {
     return Scaffold(
       body: PageView(
         controller: _pageController,
-        children: const [
-          Feed(),
-          Search(),
-          AddImage(),
-          Favorite(),
-          Profile(),
+        // On retire 'const' ici car ProfileScreen n'est pas une constante simple
+        children: [
+          const Feed(),
+          const Search(),
+          const AddImage(),
+          const Favorite(),
+          const ProfileScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavyBar(
@@ -54,50 +55,35 @@ class _BottomNavState extends State<BottomNav> {
         items: [
           BottomNavyBarItem(
             icon: const Icon(Icons.home),
-            title: const Text(
-              "Home",
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
+            title: const Text("Home", style: TextStyle(fontSize: 25, fontFamily: 'Billabong')),
             activeColor: Colors.red,
             inactiveColor: Colors.black,
             textAlign: TextAlign.center,
           ),
           BottomNavyBarItem(
             icon: const Icon(Icons.search),
-            title: const Text(
-              "Search",
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
+            title: const Text("Search", style: TextStyle(fontSize: 25, fontFamily: 'Billabong')),
             activeColor: Colors.red,
             inactiveColor: Colors.black,
             textAlign: TextAlign.center,
           ),
           BottomNavyBarItem(
             icon: const Icon(Icons.add_a_photo),
-            title: const Text(
-              "Add",
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
+            title: const Text("Add", style: TextStyle(fontSize: 25, fontFamily: 'Billabong')),
             activeColor: Colors.red,
             inactiveColor: Colors.black,
             textAlign: TextAlign.center,
           ),
           BottomNavyBarItem(
             icon: const Icon(Icons.favorite),
-            title: const Text(
-              "Favorite",
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
+            title: const Text("Favorite", style: TextStyle(fontSize: 25, fontFamily: 'Billabong')),
             activeColor: Colors.red,
             inactiveColor: Colors.black,
             textAlign: TextAlign.center,
           ),
           BottomNavyBarItem(
             icon: const Icon(Icons.person),
-            title: const Text(
-              "Profile",
-              style: TextStyle(fontSize: 25, fontFamily: 'Billabong'),
-            ),
+            title: const Text("Profile", style: TextStyle(fontSize: 25, fontFamily: 'Billabong')),
             activeColor: Colors.red,
             inactiveColor: Colors.black,
             textAlign: TextAlign.center,

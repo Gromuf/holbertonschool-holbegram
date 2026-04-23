@@ -5,26 +5,28 @@ import 'package:holbegram/screens/auth/signup_screen.dart';
 import 'package:holbegram/screens/home.dart';
 
 class LoginScreen extends StatefulWidget {
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
-
-  const LoginScreen({
-    super.key,
-    required this.emailController,
-    required this.passwordController,
-  });
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   late bool _passwordVisible;
 
   @override
   void initState() {
     super.initState();
     _passwordVisible = true;
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -42,14 +44,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const SizedBox(height: 28),
                   TextFieldInput(
-                    controller: widget.emailController,
+                    controller: emailController,
                     ispassword: false,
                     hintText: "Email",
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 24),
                   TextFieldInput(
-                    controller: widget.passwordController,
+                    controller: passwordController,
                     ispassword: !_passwordVisible,
                     hintText: "Password",
                     keyboardType: TextInputType.visiblePassword,
@@ -68,8 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       onPressed: () async {
                         String res = await AuthMethode().login(
-                          email: widget.emailController.text,
-                          password: widget.passwordController.text,
+                          email: emailController.text,
+                          password: passwordController.text,
                         );
                         if (res == "success") {
                           Navigator.pushReplacement(
