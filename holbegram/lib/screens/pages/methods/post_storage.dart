@@ -47,4 +47,23 @@ class PostStorage {
       print(err.toString());
     }
   }
+
+  void savePost(String postId, String uid) async {
+    try {
+      DocumentSnapshot snap = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      List savedPosts = (snap.data() as dynamic)['savedPosts'] ?? [];
+
+      if (savedPosts.contains(postId)) {
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'savedPosts': FieldValue.arrayRemove([postId])
+        });
+      } else {
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'savedPosts': FieldValue.arrayUnion([postId])
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
