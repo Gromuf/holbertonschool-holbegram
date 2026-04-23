@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:holbegram/providers/user_provider.dart';
 import 'package:holbegram/models/user.dart';
+import 'package:holbegram/screens/pages/methods/post_storage.dart';
 
 class Posts extends StatefulWidget {
   const Posts({super.key});
@@ -71,10 +72,17 @@ class _PostsState extends State<Posts> {
                             const Spacer(),
                             IconButton(
                               icon: const Icon(Icons.more_horiz),
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Post Deleted")),
+                              onPressed: () async {
+                                // Appel de la méthode deletePost avant le snackbar
+                                await PostStorage().deletePost(
+                                  data['postId'],
                                 );
+
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("Post Deleted")),
+                                  );
+                                }
                               },
                             ),
                           ],
