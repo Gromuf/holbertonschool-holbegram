@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:holbegram/models/post.dart';
-import 'package:holbegram/screens/auth/methods/user_storage.dart'; // Vérifie le chemin (user_storage.dart)
+import 'package:holbegram/models/posts.dart';
+import 'package:holbegram/screens/auth/methods/user_storage.dart'; 
 import 'package:uuid/uuid.dart';
 
 class PostStorage {
@@ -16,14 +16,11 @@ class PostStorage {
   ) async {
     String res = "Some error occurred";
     try {
-      // 1. Upload de l'image sur Cloudinary
-      // On utilise la méthode existante de ton UserStorage
-      String photoUrl = await StorageMethods().uploadImageToCloudinary(image);
+      // ORDRE CORRIGÉ : (bool, String, Uint8List)
+      String photoUrl = await StorageMethods().uploadImageToStorage(true, 'posts', image);
 
-      // 2. Génération d'un ID unique pour le post
       String postId = const Uuid().v1();
 
-      // 3. Création de l'objet Post
       Post post = Post(
         caption: caption,
         uid: uid,
@@ -35,9 +32,7 @@ class PostStorage {
         profImage: profImage,
       );
 
-      // 4. Enregistrement dans Firestore
       await _firestore.collection('posts').doc(postId).set(post.toJson());
-
       res = "Ok";
     } catch (err) {
       res = err.toString();

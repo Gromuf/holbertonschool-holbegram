@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:holbegram/providers/user_provider.dart';
 import 'package:holbegram/models/user.dart';
 import 'package:holbegram/screens/pages/methods/post_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Posts extends StatefulWidget {
   const Posts({super.key});
@@ -15,7 +16,6 @@ class Posts extends StatefulWidget {
 class _PostsState extends State<Posts> {
   @override
   Widget build(BuildContext context) {
-    // Utilisation du provider pour récupérer l'utilisateur actuel
     final Users? user = Provider.of<UserProvider>(context).getUser;
 
     return StreamBuilder(
@@ -37,14 +37,10 @@ class _PostsState extends State<Posts> {
 
               return SingleChildScrollView(
                 child: Container(
-                  margin: EdgeInsetsGeometry.lerp(
-                    const EdgeInsets.all(8),
-                    const EdgeInsets.all(8),
-                    10,
-                  ),
+                  margin: const EdgeInsets.all(8),
                   height: 540,
                   decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 255, 255, 255),
+                    color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                   ),
                   child: Column(
@@ -73,25 +69,22 @@ class _PostsState extends State<Posts> {
                             IconButton(
                               icon: const Icon(Icons.more_horiz),
                               onPressed: () async {
-                                // Appel de la méthode deletePost avant le snackbar
-                                await PostStorage().deletePost(
-                                  data['postId'],
-                                );
-
+                                await PostStorage().deletePost(data['postId']);
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("Post Deleted")),
-                                  );
+                                  showSnackBar(context, "Post Deleted");
                                 }
                               },
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        width: double.infinity,
+                      // Remplacement du SizedBox par Padding pour éviter l'erreur de paramètre
+                      Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(data['caption']),
+                        child: Container(
+                          width: double.infinity,
+                          child: Text(data['caption']),
+                        ),
                       ),
                       const SizedBox(height: 10),
                       Container(
@@ -105,28 +98,15 @@ class _PostsState extends State<Posts> {
                           ),
                         ),
                       ),
-                      // Ajout des icônes d'interaction (Like, Comment, Share)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                         child: Row(
                           children: [
-                            IconButton(
-                              icon: const Icon(Icons.favorite_border),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.chat_bubble_outline),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.send_outlined),
-                              onPressed: () {},
-                            ),
+                            IconButton(icon: const Icon(Icons.favorite_border), onPressed: () {}),
+                            IconButton(icon: const Icon(Icons.chat_bubble_outline), onPressed: () {}),
+                            IconButton(icon: const Icon(Icons.send_outlined), onPressed: () {}),
                             const Spacer(),
-                            IconButton(
-                              icon: const Icon(Icons.bookmark_border),
-                              onPressed: () {},
-                            ),
+                            IconButton(icon: const Icon(Icons.bookmark_border), onPressed: () {}),
                           ],
                         ),
                       ),
@@ -137,9 +117,23 @@ class _PostsState extends State<Posts> {
             },
           );
         }
-
         return const Center(child: CircularProgressIndicator(color: Colors.red));
       },
     );
+  }
+}
+
+// Fonctions utilitaires partagées
+showSnackBar(BuildContext context, String text) {
+  return ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(text)),
+  );
+}
+
+pickImage(ImageSource source) async {
+  final ImagePicker imagePicker = ImagePicker();
+  XFile? file = await imagePicker.pickImage(source: source);
+  if (file != null) {
+    return await file.readAsBytes();
   }
 }
